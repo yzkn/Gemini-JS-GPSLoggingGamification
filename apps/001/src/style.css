@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 地図の高さ調整などはここに残す */
+#map {
+    height: calc(100vh - 280px);
+    width: 100%;
+}
+
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* MapLibreのポップアップなどもダークモードに合わせる場合はここに追記 */
+.maplibregl-ctrl-attrib {
+    background: rgba(15, 23, 42, 0.5) !important;
+    color: #94a3b8 !important;
+}

@@ -1,0 +1,26 @@
+{
+    "name": "expressway-rta-app",
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "geographiclib-geodesic": "^2.2.0",
+        "maplibre-gl": "^4.7.1"
+    },
+    "description": "",
+    "main": "index.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "autoprefixer": "^10.4.27",
+        "postcss": "^8.5.9",
+        "tailwindcss": "^4.2.2",
+        "vite": "^8.0.8"
+    }
+}

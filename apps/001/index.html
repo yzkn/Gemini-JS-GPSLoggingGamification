@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>高速道路RTA</title>
+    <!-- CDN版JSは削除 -->
+    <link href='https://unpkg.com/maplibre-gl@4.0.0/dist/maplibre-gl.css' rel='stylesheet' />
+</head>
+
+<body class="bg-slate-950 text-slate-200 font-sans overflow-hidden">
+    <div id="app">
+        <!-- 警告オーバーレイ -->
+        <div id="warning-overlay">
+            <div class="modal">
+                <h2>安全運転のために</h2>
+                <p>運転中のスマホ操作は厳禁です。開始ボタンを押した後は安全な場所に固定してください。</p>
+                <button id="btn-agree">了解して開始</button>
+            </div>
+        </div>
+
+        <header>
+            <div id="speed-display">0 <span class="unit">km/h</span></div>
+            <div id="next-cp-info">
+                <div id="next-cp-name">次のCP: ---</div>
+                <div id="next-cp-dist">距離: --- m</div>
+            </div>
+        </header>
+
+        <div id="map"></div>
+
+        <div id="controls">
+            <button id="btn-start">計測開始</button>
+            <button id="btn-pause" disabled>一時停止</button>
+            <button id="btn-stop" disabled>計測終了</button>
+            <button id="btn-settings">⚙️</button>
+        </div>
+
+        <div id="lap-list">
+            <ul id="laps"></ul>
+        </div>
+
+        <!-- index.html の中に追加 -->
+        <div id="settings-screen" class="hidden">
+            <div class="settings-header">
+                <button id="btn-close-settings">✕ 閉じる</button>
+                <h2>設定・記録管理</h2>
+            </div>
+
+            <div class="settings-content">
+                <section>
+                    <h3>計測設定</h3>
+                    <div class="setting-item">
+                        <label>測位頻度 (秒)</label>
+                        <input type="number" id="setting-interval" value="5" min="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>最小移動距離 (m)</label>
+                        <input type="number" id="setting-min-dist" value="5" min="0">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>挑戦記録の管理</h3>
+                    <div id="session-list-container">
+                        <p>記録を読み込み中...</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>一括エクスポート</h3>
+                    <button id="btn-export-all-csv" class="secondary">全セッションをCSV出力</button>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
