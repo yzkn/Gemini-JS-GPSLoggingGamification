@@ -1,0 +1,22 @@
+{
+    "short_name": "高速RTA",
+    "name": "高速RTA",
+    "icons": [
+        {
+            "src": "icons/icon-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "./index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#121212",
+    "background_color": "#121212",
+    "description": "高速道路の通過タイムを自動記録するGPSロガー"
+}

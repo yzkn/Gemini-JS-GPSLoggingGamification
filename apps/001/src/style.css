@@ -1,19 +1,124 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+    --bg-color: #121212;
+    --panel-bg: rgba(30, 30, 30, 0.9);
+    --text-color: #e0e0e0;
+    --accent-color: #00e676;
+    --danger-color: #ff5252;
+}
 
-/* 地図の高さ調整などはここに残す */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden;
+    height: 100vh;
+}
+
 #map {
-    height: calc(100vh - 280px);
+    position: absolute;
+    top: 0;
+    bottom: 0;
     width: 100%;
 }
 
-.safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+/* リアルタイム表示 (HUD) */
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
 }
 
-/* MapLibreのポップアップなどもダークモードに合わせる場合はここに追記 */
-.maplibregl-ctrl-attrib {
-    background: rgba(15, 23, 42, 0.5) !important;
-    color: #94a3b8 !important;
+.stats-main {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+#dist-to-next {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.stats-sub {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.9rem;
+}
+
+/* 操作パネル */
+#controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+/* モーダル修正ポイント: pointer-events と visibility で管理 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #252525;
+    padding: 20px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.setting-item {
+    margin-bottom: 15px;
+}
+
+.setting-item label {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.setting-item input,
+.setting-item select {
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    border: none;
+    color: white;
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+}
+
+.btn-danger {
+    background: var(--danger-color);
 }
