@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Highway RTA</title>
+    <!-- デジタルフォントの読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        .font-digital {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .font-mono-racing {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .neon-text-green {
+            text-shadow: 0 0 10px #4ade80, 0 0 20px #4ade80;
+        }
+
+        .neon-border-green {
+            box-shadow: 0 0 10px #4ade80;
+            border-color: #4ade80;
+        }
+
+        /* 地図のグロー効果用 */
+        .map-overlay-shadow {
+            background: radial-gradient(circle, rgba(2, 6, 23, 0) 60%, rgba(2, 6, 23, 0.8) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 overflow-hidden fixed inset-0 select-none">
+
+    <!-- Header: 巨大な距離表示 & 進捗バー -->
+    <header class="absolute top-0 w-full z-10 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 p-4">
+        <div class="flex flex-col items-center">
+            <div class="text-xs text-slate-400 uppercase tracking-widest">Next Checkpoint</div>
+            <div id="next-cp-distance" class="text-7xl font-digital text-green-400 neon-text-green">0.0</div>
+            <div class="text-xl font-digital text-green-400">km</div>
+        </div>
+        <!-- 進捗バー -->
+        <div class="w-full h-2 bg-slate-800 mt-2 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-green-500 shadow-[0_0_10px_#22c55e]" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Main: 地図エリア -->
+    <main id="map" class="w-full h-full"></main>
+    <div class="absolute inset-0 map-overlay-shadow"></div>
+
+    <!-- Side: ラップリスト -->
+    <aside id="lap-panel"
+        class="absolute right-0 top-32 bottom-40 w-48 bg-slate-900/60 backdrop-blur-sm border-l border-slate-700 p-2 overflow-y-auto transform translate-x-full transition-transform duration-300">
+        <h3 class="text-xs font-bold text-slate-400 mb-2 border-b border-slate-700 pb-1">LAP TIMES</h3>
+        <ul id="lap-list" class="space-y-2 font-mono-racing text-sm">
+            <!-- ログがここに挿入される -->
+        </ul>
+    </aside>
+
+    <!-- Bottom: スピードメーター & コントロール -->
+    <footer
+        class="absolute bottom-0 w-full z-10 bg-slate-950/90 border-t border-slate-800 p-6 flex items-center justify-between">
+        <div class="flex flex-col">
+            <span id="speed-value" class="text-6xl font-digital text-green-400">0</span>
+            <span class="text-xs text-slate-400 text-center uppercase">km/h</span>
+        </div>
+
+        <div class="flex gap-4">
+            <button id="btn-start"
+                class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-full font-bold transition-all active:scale-95">START</button>
+            <button id="btn-stop"
+                class="bg-red-900/40 border border-red-500 text-red-500 px-6 py-3 rounded-full font-bold opacity-50"
+                disabled>STOP (Hold)</button>
+        </div>
+    </footer>
+
+    <!-- 初期警告画面 (Wake Lockトリガー) -->
+    <div id="overlay-start"
+        class="absolute inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
+        <h1 class="text-2xl font-digital text-green-400 mb-4">HIGHWAY RTA</h1>
+        <p class="text-slate-400 mb-8 text-sm">安全のため、運転中の操作は絶対に行わないでください。計測を開始するにはボタンを押してください。</p>
+        <button id="btn-init"
+            class="bg-green-500 text-slate-950 font-bold py-4 px-12 rounded-full animate-bounce">READY</button>
+    </div>
+
+    <!-- 依存ライブラリの読み込み -->
+    <script type="module" src="./src/main.js"></script>
+</body>
+
+</html>

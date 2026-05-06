@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@layer components {
+    .font-digital {
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .font-mono-racing {
+        font-family: 'Share Tech Mono', monospace;
+    }
+
+    .neon-text-green {
+        text-shadow: 0 0 10px #4ade80, 0 0 20px #4ade80;
+    }
+
+    .neon-border-green {
+        box-shadow: 0 0 10px #4ade80;
+        border-color: #4ade80;
+    }
+}
+
+body {
+    @apply bg-slate-950 text-slate-100;
+    margin: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
