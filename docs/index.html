@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#020617" />
+  <title>高速道路RTA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <script type="module" crossorigin src="/assets/index-B1awv95y.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/maplibre-BD93s8Mz.js">
+  <link rel="modulepreload" crossorigin href="/assets/geodesic-DitgisW7.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-kl3Bhyk7.css">
+<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+<body class="bg-slate-950 overflow-hidden h-screen w-screen select-none">
+
+  <!-- Safety Warning Overlay -->
+  <div id="safety-overlay" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+    <div class="text-red-500 text-7xl mb-4 leading-none">⚠</div>
+    <h1 class="text-red-500 text-2xl font-bold mb-4 font-mono">安全上の警告</h1>
+    <div class="text-orange-400 text-sm leading-relaxed mb-8 max-w-sm font-mono">
+      <p class="mb-3">このアプリは<strong>助手席・後席での使用</strong>を前提としています。</p>
+      <p class="mb-3">運転中の操作は絶対に行わないでください。</p>
+      <p class="text-slate-400">ルートを選択すると画面の常時表示（Wake Lock）が有効になります。</p>
+    </div>
+    <div class="w-full max-w-sm">
+      <p class="text-green-400 text-xs mb-3 font-mono tracking-wider">▼ ルート選択 ▼</p>
+      <div id="route-buttons" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden flex-col h-screen w-screen bg-slate-950">
+
+    <!-- Header: Next CP Distance + Progress -->
+    <header id="header" class="flex-shrink-0 px-4 pt-safe pt-3 pb-2 border-b border-slate-800 bg-slate-950">
+      <div class="flex items-baseline justify-center gap-2">
+        <span id="next-cp-distance" class="text-7xl font-mono text-red-500 leading-none transition-colors duration-300 neon-text">-.--</span>
+        <span class="text-xl font-mono text-slate-400">km</span>
+      </div>
+      <div class="mt-2">
+        <div class="flex justify-between text-xs font-mono mb-1 px-0.5">
+          <span id="prev-cp-name" class="text-slate-500 truncate max-w-[45%]">-</span>
+          <span id="next-cp-name" class="text-green-400 truncate max-w-[45%] text-right">-</span>
+        </div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full bg-green-400 rounded-full transition-all duration-500 progress-glow" style="width: 0%"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Map + Lap Overlay -->
+    <div class="relative flex-1 overflow-hidden">
+      <div id="map" class="absolute inset-0"></div>
+
+      <!-- Lap List (right overlay) -->
+      <div id="lap-list" class="absolute top-2 right-2 w-40 max-h-64 overflow-y-auto bg-black/75 rounded-lg p-2 backdrop-blur-sm border border-slate-700/50">
+        <h3 class="text-xs font-mono text-slate-400 mb-1.5 text-center tracking-widest">LAP</h3>
+        <ul id="lap-items" class="space-y-1.5 text-xs font-mono">
+          <li id="lap-placeholder" class="text-slate-600 text-center py-2">-</li>
+        </ul>
+      </div>
+
+      <!-- GPS accuracy indicator -->
+      <div id="gps-indicator" class="absolute bottom-2 left-2 flex items-center gap-1.5 bg-black/60 rounded px-2 py-1">
+        <div id="gps-dot" class="w-2 h-2 rounded-full bg-red-500 gps-pulse"></div>
+        <span id="gps-status-text" class="text-xs font-mono text-slate-400">GPS待機中</span>
+      </div>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div id="controls" class="flex-shrink-0 bg-slate-900 border-t border-slate-800 px-4 py-3 pb-safe">
+      <!-- Speed + Elapsed -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-baseline gap-1">
+          <span id="speed-display" class="text-5xl font-mono text-green-400 leading-none neon-text">0</span>
+          <span class="text-sm font-mono text-slate-400">km/h</span>
+        </div>
+        <div class="text-right font-mono">
+          <div id="elapsed-time" class="text-xl text-orange-400">00:00:00</div>
+          <div id="cp-progress-text" class="text-xs text-slate-500">CP 0/0</div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-2">
+        <button id="btn-start"
+          class="flex-1 py-3 rounded-lg bg-green-700 text-white font-bold text-sm font-mono active:scale-95 transition-transform border border-green-500/50">
+          計測開始
+        </button>
+        <button id="btn-pause"
+          class="hidden flex-1 py-3 rounded-lg bg-orange-700 text-white font-bold text-sm font-mono active:scale-95 transition-transform border border-orange-500/50">
+          一時停止
+        </button>
+        <button id="btn-resume"
+          class="hidden flex-1 py-3 rounded-lg bg-green-700 text-white font-bold text-sm font-mono active:scale-95 transition-transform border border-green-500/50">
+          再　　開
+        </button>
+        <button id="btn-end"
+          class="hidden flex-1 py-3 rounded-lg bg-slate-800 text-red-400 font-bold text-sm font-mono border border-red-900/50 relative overflow-hidden">
+          <span class="relative z-10">計測終了<br><span class="text-xs font-normal text-slate-500">（長押し）</span></span>
+          <div id="btn-end-progress" class="absolute inset-y-0 left-0 bg-red-900/40 w-0 transition-none"></div>
+        </button>
+      </div>
+
+      <!-- Export row (shown after finish) -->
+      <div id="export-buttons" class="hidden flex gap-2 mt-2">
+        <button id="btn-csv"
+          class="flex-1 py-2 rounded-lg bg-slate-800 text-green-400 text-xs font-mono border border-slate-700 active:bg-slate-700">
+          CSV出力
+        </button>
+        <button id="btn-geojson"
+          class="flex-1 py-2 rounded-lg bg-slate-800 text-green-400 text-xs font-mono border border-slate-700 active:bg-slate-700">
+          GeoJSON
+        </button>
+        <button id="btn-new"
+          class="flex-1 py-2 rounded-lg bg-slate-800 text-orange-400 text-xs font-mono border border-slate-700 active:bg-slate-700">
+          新セッション
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
